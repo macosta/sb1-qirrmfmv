@@ -1,0 +1,6 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# sitemap
+Sitemap: https://guitar-god.example.com/sitemap.xml

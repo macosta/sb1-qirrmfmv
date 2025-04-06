@@ -1,0 +1,7 @@
+# Security Contacts and Policies
+Contact: mailto:security@guitarapp.example.com
+Expires: 2025-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://guitarapp.example.com/.well-known/security.txt
+Policy: https://guitarapp.example.com/security-policy
+Hiring: https://guitarapp.example.com/security-jobs

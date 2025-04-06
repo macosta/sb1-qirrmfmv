@@ -1,0 +1,396 @@
+/* Fretboard Styling - Optimized and merged with mobile styles */
+:root {
+  --string-height: 32px;
+  --fret-width: 32px;
+  --nut-width: 3px;
+  --fret-wire-width: 1px;
+  --tuning-column-width: 40px;
+  --fretboard-bg: #000;
+  --fretboard-border-radius: 8px;
+  --fretboard-orientation: horizontal;
+  --fretboard-transition: all 0.3s ease;
+}
+
+.fretboard-container {
+  position: relative;
+  background-color: var(--fretboard-bg);
+  border-radius: var(--fretboard-border-radius);
+  overflow: hidden;
+  transition: var(--fretboard-transition);
+}
+
+.fretboard-scroll-container {
+  position: relative;
+  overflow: auto;
+  padding: 2px;
+  max-width: 100%;
+  transition: var(--fretboard-transition);
+}
+
+.unselectable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Fretboard layout */
+.fretboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-radius: 4px;
+  background-color: #000;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: var(--fretboard-transition);
+}
+
+/* Fret numbers */
+.fret-number-row {
+  display: flex;
+  height: 16px;
+  background-color: #000;
+  border-bottom: 1px solid #333;
+  transition: var(--fretboard-transition);
+}
+
+.fret-number {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ccc;
+  font-size: 10px;
+  position: relative;
+  min-width: 30px;
+}
+
+/* Fret dot markers */
+.fret-dot-marker {
+  position: relative;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #666;
+  margin: 1px;
+}
+
+/* Note markers */
+.marker-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Note appearance */
+.normal-scale {
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* String styling */
+.string-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  height: 1px;
+  z-index: 1;
+}
+
+/* Fret styling */
+.fret-cell {
+  flex: 1;
+  min-width: 30px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fret-cell:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Slimmer, more rectangular fretboard */
+.slim-fretboard {
+  --string-height: 32px; /* Further reduced height for strings */
+  --fret-width: 32px; /* Consistent width for frets */
+  --nut-width: 3px; /* Width of the nut line */
+  --fret-wire-width: 1px; /* Width of fret wires */
+}
+
+.slim-fretboard .string-row {
+  height: var(--string-height);
+  border-bottom: 1px solid #222;
+  position: relative;
+  display: flex;
+  align-items: center; /* Vertical centering of contents */
+}
+
+.slim-fretboard .tuning-column {
+  width: var(--tuning-column-width);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: var(--nut-width) solid #aaa; /* Nut is silver-colored */
+  background-color: #111;
+  position: relative;
+  z-index: 2;
+}
+
+.slim-fretboard .fret-grid {
+  display: flex;
+  flex: 1;
+  position: relative;
+  height: 100%; /* Ensure grid takes full height */
+}
+
+.slim-fretboard .fret-wire {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--fret-wire-width);
+  background: linear-gradient(to right, rgba(130, 130, 130, 0.3), rgba(200, 200, 200, 0.7), rgba(130, 130, 130, 0.3));
+  z-index: 2;
+}
+
+.slim-fretboard .fret-position {
+  flex: 1;
+  min-width: var(--fret-width);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Perfect vertical centering */
+  position: relative;
+}
+
+/* Note position styling - ensures notes are centered vertically between frets */
+.slim-fretboard .note-marker {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px; /* Increased size to fit enharmonic names better */
+  height: 30px; /* Increased size to fit enharmonic names better */
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  /* Center the note marker vertically and horizontally */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem; /* Smaller text for the markers */
+  line-height: 1; /* Tighter line height for multi-line text */
+}
+
+/* Specific styling for the enharmonic display */
+.slim-fretboard .note-marker .enharmonic-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 0.9;
+}
+
+.slim-fretboard .note-marker .main-note {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.slim-fretboard .note-marker .alt-note {
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+/* Ensures accurate fret grid alignment */
+.slim-fretboard .fretboard-background {
+  background: linear-gradient(to bottom, #1A1209, #110D06);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+/* Specific styles for fret position visual guides */
+.slim-fretboard .fret-cells-container {
+  position: relative;
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .slim-fretboard {
+    --string-height: 28px; /* Reduced height for strings on mobile */
+    --fret-width: 24px; /* Reduced width for frets on mobile */
+  }
+  
+  .slim-fretboard .tuning-column {
+    width: 32px; /* Smaller tuning column on mobile */
+  }
+  
+  .slim-fretboard .note-marker {
+    width: 24px; /* Smaller note markers on mobile */
+    height: 24px;
+    font-size: 0.8rem;
+  }
+  
+  .slim-fretboard .note-marker .main-note {
+    font-size: 10px;
+  }
+  
+  .slim-fretboard .note-marker .alt-note {
+    font-size: 7px;
+  }
+  
+  /* Mobile-specific styles for the fretboard component */
+  /* Container styles for vertical orientation */
+  .fretboard-container {
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    perspective: 1000px;
+  }
+
+  .fretboard-scroll-container {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 4px;
+  }
+
+  /* Rotate the fretboard for vertical orientation */
+  .fretboard-wrapper.vertical-fretboard {
+    transform: rotate(-90deg) translateX(-100%);
+    transform-origin: top left;
+    width: 100vh;
+    height: auto;
+    margin-top: 2rem; /* Add space for fret numbers */
+  }
+
+  /* Fret numbers now appear on the side */
+  .vertical-fretboard .fret-number-row {
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    right: -20px;
+    height: 100%;
+    width: 16px;
+    background-color: transparent;
+    border: none;
+  }
+
+  .vertical-fretboard .fret-number {
+    width: 16px;
+    height: 30px;
+    transform: rotate(90deg);
+  }
+
+  /* String rows need to be wider for better touch targets */
+  .vertical-fretboard .slim-fretboard .string-row {
+    height: 44px; /* Increased height for better touch targets */
+  }
+
+  /* Tuning column adjusted for vertical layout */
+  .vertical-fretboard .slim-fretboard .tuning-column {
+    height: 44px;
+    transform: rotate(90deg);
+  }
+
+  /* Adjust fret positions for vertical layout */
+  .vertical-fretboard .slim-fretboard .fret-position {
+    height: 44px; /* Taller fret positions for touch */
+  }
+
+  /* Counter-rotate note markers to keep them readable */
+  .vertical-fretboard .slim-fretboard .note-marker {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  /* Fix position of fret wires in vertical orientation */
+  .vertical-fretboard .slim-fretboard .fret-wire {
+    height: 100%;
+    width: 1px;
+  }
+
+  /* Adjust string line for vertical orientation */
+  .vertical-fretboard .slim-fretboard .string-line {
+    width: 100%;
+  }
+
+  /* Force horizontal scrolling to be disabled */
+  .vertical-fretboard-container {
+    overflow-x: hidden !important;
+  }
+
+  /* Zoom controls for mobile */
+  .mobile-zoom-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mobile-zoom-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+  .fret-position {
+    min-height: 36px; /* Ensure touch targets are at least 36px */
+  }
+  
+  .slim-fretboard .note-marker {
+    width: 28px; /* Bigger note markers for touch */
+    height: 28px;
+  }
+}
+
+/* Portrait orientation styles */
+@media screen and (orientation: portrait) {
+  .fretboard-container {
+    height: 100vh !important;
+  }
+}
+
+/* Landscape orientation styles */
+@media screen and (orientation: landscape) {
+  .fretboard-container {
+    height: 100vh !important;
+    transform: rotate(90deg);
+    transform-origin: top left;
+  }
+}
