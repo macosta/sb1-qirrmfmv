@@ -10,6 +10,7 @@ import { InteractiveScalesButton } from './components/UI/InteractiveScalesButton
 import MusicalInfoDisplay from './components/UI/MusicalInfoDisplay';
 import { useMobileDetection } from './hooks/useMediaQuery';
 import ErrorBoundary from './components/ErrorBoundary';
+import { Card, CardContent } from './components/UI/card';
 
 // Components
 import NoteSelector from './components/UI/NoteSelector';
@@ -173,24 +174,26 @@ function App() {
             )}
 
             {/* Guitar visualization */}
-            <div className={cn(
-              "bg-white dark:bg-metal-darker rounded-lg shadow-md dark:shadow-neon-blue dark:border dark:border-metal-blue p-4 overflow-x-auto transition-all duration-300",
+            <Card className={cn(
+              "transition-all duration-300",
               isMobile && "h-[calc(100vh-12rem)] mt-0"
             )}>
-              <ErrorBoundary>
-                {mode === 'fretboard' && (
-                  <Fretboard showChords={showChords} setShowChords={setShowChords} />
-                )}
-                {mode === 'chords' && <ChordLearner />}
-                {mode === 'scales' && (
-                  <Suspense fallback={<LoadingFallback />}>
-                    <Scales />
-                  </Suspense>
-                )}
-                {mode === 'tuner' && <Tuner />}
-                {mode === 'metronome' && <Metronome />}
-              </ErrorBoundary>
-            </div>
+              <CardContent className="p-4 overflow-x-auto">
+                <ErrorBoundary>
+                  {mode === 'fretboard' && (
+                    <Fretboard showChords={showChords} setShowChords={setShowChords} />
+                  )}
+                  {mode === 'chords' && <ChordLearner />}
+                  {mode === 'scales' && (
+                    <Suspense fallback={<LoadingFallback />}>
+                      <Scales />
+                    </Suspense>
+                  )}
+                  {mode === 'tuner' && <Tuner />}
+                  {mode === 'metronome' && <Metronome />}
+                </ErrorBoundary>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
