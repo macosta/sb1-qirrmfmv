@@ -11,6 +11,8 @@ import MusicalInfoDisplay from './components/UI/MusicalInfoDisplay';
 import { useMobileDetection } from './hooks/useMediaQuery';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Card, CardContent } from './components/UI/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './components/UI/tooltip';
+import { Button } from './components/UI/button';
 
 // Components
 import NoteSelector from './components/UI/NoteSelector';
@@ -85,133 +87,144 @@ function App() {
   }, [isMobile, setFretboardOrientation]);
 
   return (
-    <div className={cn(
-      "min-h-screen bg-gray-50 dark:bg-metal-dark text-gray-900 dark:text-gray-100 transition-colors duration-300",
-      isMobile && "mobile-layout"
-    )}>
-      {/* Main Navigation Bar - Only show on desktop */}
-      {!isMobile && <Navigation />}
+    <TooltipProvider>
+      <div className={cn(
+        "min-h-screen bg-gray-50 dark:bg-metal-dark text-gray-900 dark:text-gray-100 transition-colors duration-300",
+        isMobile && "mobile-layout"
+      )}>
+        {/* Main Navigation Bar - Only show on desktop */}
+        {!isMobile && <Navigation />}
+        
+        {/* Mobile Control Panel */}
+        {isMobile && (
+          <MobileControlPanel
+            isOpen={mobileControlsOpen}
+            onToggle={() => setMobileControlsOpen(!mobileControlsOpen)}
+            showChords={showChords}
+            setShowChords={setShowChords}
+          />
+        )}
+        
+        {/* Note Selection Bar */}
+        <div className={cn(
+          "relative",
+          isMobile && "mt-14" // Add margin for mobile header
+        )}>
+          <button
+            onClick={toggleShowNotesBar}
+            className="w-full bg-black dark:bg-metal-darker border-b border-metal-blue shadow-neon-blue p-2 flex items-center justify-between"
+            aria-expanded={showNotesBar}
+            aria-controls="notes-bar"
+          >
+            <div className="flex items-center space-x-2">
+              <Music className="w-4 h-4 text-white" />
+              <span className="text-sm font-medium text-white">Notes Selection</span>
+            </div>
+            {showNotesBar ? (
+              <ChevronUp className="w-4 h-4 text-white" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-white" />
+            )}
+          </button>
+
+          <AnimatePresence initial={false}>
+            {showNotesBar && (
+              <motion.div
+                key="notes-bar"
+                id="notes-bar"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className="overflow-hidden bg-black dark:bg-metal-darker border-b border-metal-blue"
+              >
+                <div className="p-4">
+                  <NoteSelector />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       
-      {/* Mobile Control Panel */}
-      {isMobile && (
-        <MobileControlPanel
-          isOpen={mobileControlsOpen}
-          onToggle={() => setMobileControlsOpen(!mobileControlsOpen)}
+        <div className={cn(
+          "max-w-full mx-auto px-4 py-6",
+          isMobile && "pt-4" // Reduced padding for mobile
+        )}>
+          <div className="w-full">
+            {/* Main content */}
+            <div className="space-y-6">
+              {/* Desktop Control Panel */}
+              {!isMobile && (
+                <div className="relative flex flex-col md:flex-row justify-between md:items-center mb-2 py-1 px-2 bg-white dark:bg-metal-darkest border dark:border-metal-blue rounded-lg shadow-sm dark:shadow-neon-blue transition-colors duration-300">
+                  {/* Musical Information Display */}
+                  <MusicalInfoDisplay
+                    selectedNote={selectedNote}
+                    selectedScale={selectedScale}
+                    selectedChord={selectedChord}
+                    className="px-3"
+                  />
+
+                  {/* Controls Button */}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={() => setControlsModalOpen(true)}
+                        variant="default"
+                        size="default"
+                        className="font-metal-mania ml-auto shadow-neon-blue"
+                        aria-label="Open fretboard controls"
+                      >
+                        <Zap className="w-4 h-4" />
+                        <span>Fretboard Controls</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Manage fretboard display settings and markers</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              )}
+
+              {/* Guitar visualization */}
+              <Card className={cn(
+                "transition-all duration-300",
+                isMobile && "h-[calc(100vh-12rem)] mt-0"
+              )}>
+                <CardContent className="p-4 overflow-x-auto">
+                  <ErrorBoundary>
+                    {mode === 'fretboard' && (
+                      <Fretboard showChords={showChords} setShowChords={setShowChords} />
+                    )}
+                    {mode === 'chords' && <ChordLearner />}
+                    {mode === 'scales' && (
+                      <Suspense fallback={<LoadingFallback />}>
+                        <Scales />
+                      </Suspense>
+                    )}
+                    {mode === 'tuner' && <Tuner />}
+                    {mode === 'metronome' && <Metronome />}
+                  </ErrorBoundary>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+        
+        {/* Fretboard Display Modal */}
+        <FretboardDisplayModal 
+          open={fretModalOpen} 
+          onOpenChange={setFretModalOpen}
+        />
+
+        {/* Fretboard Controls Modal */}
+        <FretboardControlsModal
+          open={controlsModalOpen}
+          onOpenChange={setControlsModalOpen}
           showChords={showChords}
           setShowChords={setShowChords}
         />
-      )}
-      
-      {/* Note Selection Bar */}
-      <div className={cn(
-        "relative",
-        isMobile && "mt-14" // Add margin for mobile header
-      )}>
-        <button
-          onClick={toggleShowNotesBar}
-          className="w-full bg-black dark:bg-metal-darker border-b border-metal-blue shadow-neon-blue p-2 flex items-center justify-between"
-          aria-expanded={showNotesBar}
-          aria-controls="notes-bar"
-        >
-          <div className="flex items-center space-x-2">
-            <Music className="w-4 h-4 text-white" />
-            <span className="text-sm font-medium text-white">Notes Selection</span>
-          </div>
-          {showNotesBar ? (
-            <ChevronUp className="w-4 h-4 text-white" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-white" />
-          )}
-        </button>
-
-        <AnimatePresence initial={false}>
-          {showNotesBar && (
-            <motion.div
-              key="notes-bar"
-              id="notes-bar"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: 'easeInOut' }}
-              className="overflow-hidden bg-black dark:bg-metal-darker border-b border-metal-blue"
-            >
-              <div className="p-4">
-                <NoteSelector />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
-    
-      <div className={cn(
-        "max-w-full mx-auto px-4 py-6",
-        isMobile && "pt-4" // Reduced padding for mobile
-      )}>
-        <div className="w-full">
-          {/* Main content */}
-          <div className="space-y-6">
-            {/* Desktop Control Panel */}
-            {!isMobile && (
-              <div className="relative flex flex-col md:flex-row justify-between md:items-center mb-2 py-1 px-2 bg-white dark:bg-metal-darkest border dark:border-metal-blue rounded-lg shadow-sm dark:shadow-neon-blue transition-colors duration-300">
-                {/* Musical Information Display */}
-                <MusicalInfoDisplay
-                  selectedNote={selectedNote}
-                  selectedScale={selectedScale}
-                  selectedChord={selectedChord}
-                  className="px-3"
-                />
-
-                {/* Controls Button */}
-                <button
-                  onClick={() => setControlsModalOpen(true)}
-                  className="p-2 rounded-full bg-metal-blue text-white hover:bg-metal-lightblue transition-colors flex items-center space-x-2 font-metal-mania ml-auto"
-                  aria-label="Open fretboard controls"
-                >
-                  <Zap className="w-4 h-4" />
-                  <span>Fretboard Controls</span>
-                </button>
-              </div>
-            )}
-
-            {/* Guitar visualization */}
-            <Card className={cn(
-              "transition-all duration-300",
-              isMobile && "h-[calc(100vh-12rem)] mt-0"
-            )}>
-              <CardContent className="p-4 overflow-x-auto">
-                <ErrorBoundary>
-                  {mode === 'fretboard' && (
-                    <Fretboard showChords={showChords} setShowChords={setShowChords} />
-                  )}
-                  {mode === 'chords' && <ChordLearner />}
-                  {mode === 'scales' && (
-                    <Suspense fallback={<LoadingFallback />}>
-                      <Scales />
-                    </Suspense>
-                  )}
-                  {mode === 'tuner' && <Tuner />}
-                  {mode === 'metronome' && <Metronome />}
-                </ErrorBoundary>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-      
-      {/* Fretboard Display Modal */}
-      <FretboardDisplayModal 
-        open={fretModalOpen} 
-        onOpenChange={setFretModalOpen}
-      />
-
-      {/* Fretboard Controls Modal */}
-      <FretboardControlsModal
-        open={controlsModalOpen}
-        onOpenChange={setControlsModalOpen}
-        showChords={showChords}
-        setShowChords={setShowChords}
-      />
-    </div>
+    </TooltipProvider>
   );
 }
 
