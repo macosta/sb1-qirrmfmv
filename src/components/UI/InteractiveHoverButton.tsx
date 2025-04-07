@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { cn } from '../../lib/utils';
 import useGuitarStore from '../../store/useGuitarStore';
 import ChordModal from './ChordModal';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
+import { useMobileDetection } from '../../hooks/useMediaQuery';
 
 interface InteractiveHoverButtonProps {
   isActive?: boolean;
@@ -17,7 +19,6 @@ export const InteractiveHoverButton: React.FC<InteractiveHoverButtonProps> = ({
   setShowChords
 }) => {
   const { selectedNote, setSelectedChord } = useGuitarStore();
-  const [showTooltip, setShowTooltip] = useState(false);
   const [showChordModal, setShowChordModal] = useState(false);
   
   // Determine if the button should be disabled (when no root note is selected)
@@ -25,6 +26,9 @@ export const InteractiveHoverButton: React.FC<InteractiveHoverButtonProps> = ({
 
   // Debug values
   const [isClicked, setIsClicked] = useState(false);
+  
+  // Detect mobile device for UI adaptation
+  const isMobile = useMobileDetection();
   
   // Reset click state after visual feedback
   useEffect(() => {
@@ -40,9 +44,6 @@ export const InteractiveHoverButton: React.FC<InteractiveHoverButtonProps> = ({
     console.log("[Chord Button] Button clicked", { isDisabled, selectedNote, isActive });
     
     if (isDisabled) {
-      // Show tooltip when disabled button is clicked
-      setShowTooltip(true);
-      setTimeout(() => setShowTooltip(false), 3000); // Hide after 3 seconds
       return;
     }
     
@@ -64,32 +65,37 @@ export const InteractiveHoverButton: React.FC<InteractiveHoverButtonProps> = ({
     }
   };
 
-  return (
-    <div className="relative">
-      {/* Main button - with fully rounded edges */}
-      <button
-        className={cn(
-          "px-3 py-1.5 text-sm rounded-full bg-black text-white hover:bg-metal-darkest transition-colors",
-          isActive && !isDisabled && "border-2 border-metal-blue shadow-neon-blue",
-          !isActive && "border border-metal-blue",
-          isDisabled && "opacity-60 cursor-not-allowed",
-          isClicked && "animate-pulse",
-          className
-        )}
-        onClick={handleButtonClick}
-        aria-disabled={isDisabled}
-        title={isDisabled ? "Select a root note first to enable chord display" : "Show chord positions on the fretboard"}
-      >
-        Chords
-      </button>
+  // Determine button text based on device and state
+  const buttonText = isDisabled && isMobile 
+    ? "Select Root" 
+    : "Chords";
 
-      {/* Tooltip - positioned below the button */}
-      {showTooltip && (
-        <div className="absolute left-0 top-full mt-2 w-56 rounded-md bg-black text-white text-xs p-2 shadow-lg z-50">
-          Please select a root note first to view chord positions
-          <div className="absolute left-4 top-0 transform -translate-y-1/2 rotate-45 w-2 h-2 bg-black"></div>
-        </div>
-      )}
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            className={cn(
+              "px-3 py-1.5 text-sm rounded-full bg-black text-white hover:bg-metal-darkest transition-colors",
+              isActive && !isDisabled && "border-2 border-metal-blue shadow-neon-blue",
+              !isActive && "border border-metal-blue",
+              isDisabled && "opacity-60 cursor-not-allowed",
+              isClicked && "animate-pulse",
+              className
+            )}
+            onClick={handleButtonClick}
+            aria-disabled={isDisabled}
+            disabled={isDisabled}
+          >
+            {buttonText}
+          </button>
+        </TooltipTrigger>
+        {isDisabled && !isMobile && (
+          <TooltipContent side="bottom" className="max-w-xs">
+            <p>Select a root note first to enable chord display</p>
+          </TooltipContent>
+        )}
+      </Tooltip>
 
       {/* Chord modal dialog */}
       <ChordModal 
@@ -98,6 +104,6 @@ export const InteractiveHoverButton: React.FC<InteractiveHoverButtonProps> = ({
         setSelectedChord={setSelectedChord}
         setShowChords={setShowChords}
       />
-    </div>
+    </TooltipProvider>
   );
 };

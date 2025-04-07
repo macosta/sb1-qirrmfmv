@@ -92,7 +92,8 @@ export default {
         'fret-press': 'press 0.2s ease-out',
         'neon-pulse': 'neonPulse 2.5s ease-in-out infinite alternate',
         'border-glow': 'borderGlow 2s ease-in-out infinite alternate',
-        'border-trail': 'borderTrail 5s linear infinite'
+        'border-trail': 'borderTrail 5s linear infinite',
+        'pulse-attention': 'pulseAttention 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
       },
       keyframes: {
         vibration: {
@@ -139,6 +140,18 @@ export default {
           },
           '100%': {
             strokeDashoffset: '100%'
+          }
+        },
+        pulseAttention: {
+          '0%, 100%': {
+            opacity: '1',
+            transform: 'scale(1)',
+            boxShadow: '0 0 0 0 rgba(34, 118, 255, 0.7)'
+          },
+          '50%': {
+            opacity: '0.8',
+            transform: 'scale(1.05)',
+            boxShadow: '0 0 0 10px rgba(34, 118, 255, 0)'
           }
         }
       },
@@ -194,6 +207,9 @@ export default {
           'background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
         },
+        '.animate-attention-pulse': {
+          animation: 'pulseAttention 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        }
       }
       addUtilities(newUtilities)
     }

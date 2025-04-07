@@ -1,15 +1,23 @@
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo, useEffect } from 'react';
 import { cn } from '../../lib/utils';
 import { NOTES } from '../../lib/utils';
 import useGuitarStore from '../../store/useGuitarStore';
 
-const NoteSelector: React.FC = () => {
+interface NoteSelectorProps {
+  onNoteSelected?: () => void;
+}
+
+const NoteSelector: React.FC<NoteSelectorProps> = ({ onNoteSelected }) => {
   const { selectedNote, setSelectedNote, showNotesBar } = useGuitarStore();
   
   // Handle note click with callback for better performance
   const handleNoteClick = useCallback((note: string) => {
     setSelectedNote(note);
-  }, [setSelectedNote]);
+    // Call the onNoteSelected callback if provided
+    if (onNoteSelected) {
+      onNoteSelected();
+    }
+  }, [setSelectedNote, onNoteSelected]);
   
   // Format note text to handle sharps correctly
   const formatNoteText = useCallback((note: string) => {
@@ -52,12 +60,17 @@ const NoteSelector: React.FC = () => {
   return (
     <div className="w-full text-white">
       <div className="flex flex-col md:flex-row items-center gap-2" style={{ fontFamily: "'Oswald', sans-serif" }}>
-        <span className="text-metal-silver mr-2 uppercase tracking-wider mb-1 md:mb-0 text-xs">Root</span>
+        <span className="text-metal-silver mr-2 uppercase tracking-wider mb-1 md:mb-0 text-xs">Select Root Note:</span>
         
         <div className="grid grid-cols-6 gap-1 w-full">
           {noteButtons}
         </div>
       </div>
+      {!selectedNote && (
+        <div className="mt-2 text-center text-amber-400 text-xs animate-pulse">
+          👆 Select a root note above to enable chord and scale visualizations
+        </div>
+      )}
     </div>
   );
 };

@@ -1,9 +1,9 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useGuitarStore from './store/useGuitarStore';
 import { cn } from './lib/utils';
 import { useStringAudio } from './hooks/useAudio';
-import { Music, Zap, ChevronDown, ChevronUp } from 'lucide-react';
+import { Music, Zap, ChevronDown, ChevronUp, AlertCircle, ArrowDown } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from './components/UI/ToggleGroup';
 import { InteractiveHoverButton } from './components/UI/InteractiveHoverButton';
 import { InteractiveScalesButton } from './components/UI/InteractiveScalesButton';
@@ -62,10 +62,66 @@ function App() {
   const [fretModalOpen, setFretModalOpen] = useState(false);
   const [mobileControlsOpen, setMobileControlsOpen] = useState(false);
   const [controlsModalOpen, setControlsModalOpen] = useState(false);
+  const [highlightControls, setHighlightControls] = useState(false);
+  const [showControlsMessage, setShowControlsMessage] = useState(false);
   const { playString } = useStringAudio();
   
   // Use the custom hook for mobile detection
   const isMobile = useMobileDetection();
+  
+  // Track previous state of selectedNote to detect changes
+  const prevSelectedNoteRef = useRef<string | null>(null);
+  
+  // Determine if controls should be disabled
+  const isControlsDisabled = !selectedNote;
+  
+  // Handle note selection to trigger the message and highlighting
+  const handleNoteSelected = () => {
+    if (!prevSelectedNoteRef.current && selectedNote) {
+      // First note selection - show the message and highlight controls
+      setShowControlsMessage(true);
+      setHighlightControls(true);
+      
+      // Remove after 5 seconds with a smoother transition
+      const fadeTimeout = setTimeout(() => {
+        setHighlightControls(false);
+      }, 4800); // Slightly before the message to create a sequential fade
+
+      const messageTimeout = setTimeout(() => {
+        setShowControlsMessage(false);
+      }, 5000);
+      
+      return () => {
+        clearTimeout(fadeTimeout);
+        clearTimeout(messageTimeout);
+      };
+    }
+    prevSelectedNoteRef.current = selectedNote;
+  };
+  
+  // Monitor selectedNote changes
+  useEffect(() => {
+    if (!prevSelectedNoteRef.current && selectedNote) {
+      // First note selection - show the message and highlight controls
+      setShowControlsMessage(true);
+      setHighlightControls(true);
+      
+      // Remove after 5 seconds with a smoother transition
+      const fadeTimeout = setTimeout(() => {
+        setHighlightControls(false);
+      }, 4800); // Slightly before the message to create a sequential fade
+
+      const messageTimeout = setTimeout(() => {
+        setShowControlsMessage(false);
+      }, 5000);
+      
+      return () => {
+        clearTimeout(fadeTimeout);
+        clearTimeout(messageTimeout);
+      };
+    }
+    prevSelectedNoteRef.current = selectedNote;
+  }, [selectedNote]);
   
   useEffect(() => {
     // Set appropriate fretboard orientation for mobile
@@ -102,6 +158,7 @@ function App() {
             onToggle={() => setMobileControlsOpen(!mobileControlsOpen)}
             showChords={showChords}
             setShowChords={setShowChords}
+            highlightControls={highlightControls}
           />
         )}
         
@@ -139,7 +196,7 @@ function App() {
                 className="overflow-hidden bg-black dark:bg-metal-darker border-b border-metal-blue"
               >
                 <div className="p-4">
-                  <NoteSelector />
+                  <NoteSelector onNoteSelected={handleNoteSelected} />
                 </div>
               </motion.div>
             )}
@@ -164,24 +221,65 @@ function App() {
                     className="px-3"
                   />
 
-                  {/* Controls Button */}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        onClick={() => setControlsModalOpen(true)}
-                        variant="default"
-                        size="default"
-                        className="font-metal-mania ml-auto shadow-neon-blue"
-                        aria-label="Open fretboard controls"
-                      >
-                        <Zap className="w-4 h-4" />
-                        <span>Fretboard Controls</span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Manage fretboard display settings and markers</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  {/* Controls Button with message */}
+                  <div className="relative ml-auto">
+                    {/* Instructional message pointing to the controls button */}
+                    <AnimatePresence>
+                      {showControlsMessage && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          transition={{ 
+                            duration: 0.5, 
+                            ease: "easeInOut",
+                            exit: { duration: 1, ease: "easeInOut" }
+                          }}
+                          className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 py-2 px-3 bg-amber-500 dark:bg-amber-600 text-black dark:text-white text-sm font-medium rounded-md shadow-lg z-10"
+                        >
+                          <div className="flex items-center justify-between space-x-2">
+                            <p>Check out the Fretboard Controls!</p>
+                            <ArrowDown className="w-5 h-5" />
+                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-amber-500 dark:bg-amber-600 rotate-45"></div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() => !isControlsDisabled && setControlsModalOpen(true)}
+                          variant="default"
+                          size="default"
+                          className={cn(
+                            "font-metal-mania ml-auto shadow-neon-blue",
+                            isControlsDisabled && "opacity-60 cursor-not-allowed",
+                            highlightControls && !isControlsDisabled && "animate-pulse shadow-neon-blue-lg"
+                          )}
+                          disabled={isControlsDisabled}
+                          aria-label="Open fretboard controls"
+                        >
+                          {isControlsDisabled ? (
+                            <>
+                              <AlertCircle className="w-4 h-4" />
+                              <span>Select Root Note First</span>
+                            </>
+                          ) : (
+                            <>
+                              <Zap className="w-4 h-4" />
+                              <span>Fretboard Controls</span>
+                            </>
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{isControlsDisabled 
+                          ? "Please select a root note to access fretboard controls" 
+                          : "Manage fretboard display settings and markers"}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 </div>
               )}
 

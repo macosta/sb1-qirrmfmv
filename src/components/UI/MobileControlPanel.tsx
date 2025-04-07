@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, Mic, Clock, Sun, Moon, User, Settings, Sliders, Music } from 'lucide-react';
+import { ChevronDown, ChevronUp, Mic, Clock, Sun, Moon, User, Settings, Sliders, Music, AlertCircle, ArrowDown } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { ToggleGroup, ToggleGroupItem } from './ToggleGroup';
 import { InteractiveHoverButton } from './InteractiveHoverButton';
@@ -10,12 +10,15 @@ import FretboardDisplayModal from './FretboardDisplayModal';
 import ProfileModal from './ProfileModal';
 import NoteSelector from './NoteSelector';
 import { useMobileDetection } from '../../hooks/useMediaQuery';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
+import { Button } from './button';
 
 interface MobileControlPanelProps {
   isOpen: boolean;
   onToggle: () => void;
   showChords: boolean;
   setShowChords: (show: boolean) => void;
+  highlightControls?: boolean;
 }
 
 const MobileControlPanel: React.FC<MobileControlPanelProps> = ({
@@ -23,6 +26,7 @@ const MobileControlPanel: React.FC<MobileControlPanelProps> = ({
   onToggle,
   showChords,
   setShowChords,
+  highlightControls = false
 }) => {
   // Use the custom hook instead of useState + useEffect
   const isMobile = useMobileDetection();
@@ -50,11 +54,29 @@ const MobileControlPanel: React.FC<MobileControlPanelProps> = ({
 
   const [fretModalOpen, setFretModalOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [showControlsMessage, setShowControlsMessage] = useState(false);
 
   const handleProfileClick = () => {
     setProfileOpen(true);
     onToggle(); // Close the mobile menu when opening profile
   };
+  
+  // Determine if fretboard controls should be disabled
+  const isFretboardControlsDisabled = !selectedNote;
+  
+  // Show message when the note is selected but only when controls panel is open
+  React.useEffect(() => {
+    if (selectedNote && isOpen && !showControlsMessage) {
+      setShowControlsMessage(true);
+      
+      // Fade out more gradually
+      const timer = setTimeout(() => {
+        setShowControlsMessage(false);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [selectedNote, isOpen, showControlsMessage]);
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
@@ -217,7 +239,11 @@ const MobileControlPanel: React.FC<MobileControlPanelProps> = ({
                       type="checkbox"
                       checked={showTriads}
                       onChange={toggleShowTriads}
-                      className="form-checkbox h-4 w-4 text-metal-blue rounded border-metal-blue"
+                      disabled={!selectedNote}
+                      className={cn(
+                        "form-checkbox h-4 w-4 text-metal-blue rounded border-metal-blue",
+                        !selectedNote && "opacity-50 cursor-not-allowed"
+                      )}
                     />
                     <span className="text-sm text-black dark:text-metal-silver">
                       Triads
@@ -229,7 +255,11 @@ const MobileControlPanel: React.FC<MobileControlPanelProps> = ({
                       type="checkbox"
                       checked={showAllNotes}
                       onChange={toggleShowAllNotes}
-                      className="form-checkbox h-4 w-4 text-metal-blue rounded border-metal-blue"
+                      disabled={!selectedNote}
+                      className={cn(
+                        "form-checkbox h-4 w-4 text-metal-blue rounded border-metal-blue",
+                        !selectedNote && "opacity-50 cursor-not-allowed"
+                      )}
                     />
                     <span className="text-sm text-black dark:text-metal-silver">
                       All Notes
@@ -241,7 +271,11 @@ const MobileControlPanel: React.FC<MobileControlPanelProps> = ({
                       type="checkbox"
                       checked={showRoot}
                       onChange={toggleShowRoot}
-                      className="form-checkbox h-4 w-4 text-metal-blue rounded border-metal-blue"
+                      disabled={!selectedNote}
+                      className={cn(
+                        "form-checkbox h-4 w-4 text-metal-blue rounded border-metal-blue",
+                        !selectedNote && "opacity-50 cursor-not-allowed"
+                      )}
                     />
                     <span className="text-sm text-black dark:text-metal-silver">
                       Root
@@ -259,22 +293,79 @@ const MobileControlPanel: React.FC<MobileControlPanelProps> = ({
                   type="single"
                   value={scaleSystem}
                   onValueChange={(value) => value && setScaleSystem(value as any)}
-                  className="bg-black rounded-full p-1 flex justify-center w-full"
+                  disabled={!selectedNote}
+                  className={cn(
+                    "bg-black rounded-full p-1 flex justify-center w-full",
+                    !selectedNote && "opacity-50"
+                  )}
                 >
-                  <ToggleGroupItem value="3nps">3nps</ToggleGroupItem>
-                  <ToggleGroupItem value="caged">CAGED</ToggleGroupItem>
-                  <ToggleGroupItem value="none">None</ToggleGroupItem>
+                  <ToggleGroupItem value="3nps" disabled={!selectedNote}>3nps</ToggleGroupItem>
+                  <ToggleGroupItem value="caged" disabled={!selectedNote}>CAGED</ToggleGroupItem>
+                  <ToggleGroupItem value="none" disabled={!selectedNote}>None</ToggleGroupItem>
                 </ToggleGroup>
               </div>
 
-              {/* Fretboard Display Button */}
-              <button
-                onClick={() => setFretModalOpen(true)}
-                className="w-full mt-4 flex items-center justify-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-metal-darkest text-gray-700 dark:text-metal-silver rounded-md hover:bg-gray-200 dark:hover:bg-metal-dark transition-colors"
-              >
-                <Sliders className="w-4 h-4" />
-                <span>Fretboard Controls</span>
-              </button>
+              {/* Fretboard Controls Button */}
+              <div className="relative mt-6">
+                {/* Controls button instructional message */}
+                <AnimatePresence>
+                  {showControlsMessage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{
+                        duration: 0.4,
+                        ease: "easeInOut",
+                        exit: { duration: 1, ease: "easeInOut" }
+                      }}
+                      className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 py-2 px-3 bg-amber-500 dark:bg-amber-600 text-black dark:text-white text-sm font-medium rounded-md shadow-lg z-10"
+                    >
+                      <div className="flex items-center justify-between space-x-2">
+                        <p>Check out the Fretboard Controls!</p>
+                        <ArrowDown className="w-5 h-5" />
+                        <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-amber-500 dark:bg-amber-600 rotate-45"></div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="w-full">
+                        <button
+                          onClick={() => !isFretboardControlsDisabled && setFretModalOpen(true)}
+                          className={cn(
+                            "w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-metal-darkest text-gray-700 dark:text-metal-silver rounded-md transition-colors",
+                            !isFretboardControlsDisabled && "hover:bg-gray-200 dark:hover:bg-metal-dark",
+                            isFretboardControlsDisabled && "opacity-60 cursor-not-allowed",
+                            highlightControls && !isFretboardControlsDisabled && "animate-pulse shadow-neon-blue"
+                          )}
+                          disabled={isFretboardControlsDisabled}
+                        >
+                          {isFretboardControlsDisabled ? (
+                            <>
+                              <AlertCircle className="w-4 h-4 text-amber-500" />
+                              <span>Select Root Note First</span>
+                            </>
+                          ) : (
+                            <>
+                              <Sliders className="w-4 h-4" />
+                              <span>Fretboard Controls</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </TooltipTrigger>
+                    {isFretboardControlsDisabled && (
+                      <TooltipContent>
+                        <p>Please select a root note to enable fretboard controls</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
           </motion.div>
         )}
