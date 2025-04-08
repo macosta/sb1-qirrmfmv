@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Zap, Sliders, AlertCircle } from 'lucide-react';
+import { Zap, Sliders, AlertCircle, Hand } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import useGuitarStore from '../../store/useGuitarStore';
 import { ToggleGroup, ToggleGroupItem } from './ToggleGroup';
@@ -35,6 +35,8 @@ const FretboardControlsModal: React.FC<FretboardControlsModalProps> = ({
     toggleShowRoot,
     scaleSystem,
     setScaleSystem,
+    showFingers,
+    toggleShowFingers
   } = useGuitarStore();
 
   const [fretModalOpen, setFretModalOpen] = useState(false);
@@ -121,6 +123,20 @@ const FretboardControlsModal: React.FC<FretboardControlsModalProps> = ({
 
           {/* Checkboxes */}
           <div className="flex flex-col space-y-2 mt-4">
+            {/* Show Finger Positions */}
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showFingers}
+                onChange={toggleShowFingers}
+                className="form-checkbox h-4 w-4 text-metal-blue rounded border-metal-blue"
+                aria-label="Show finger positions"
+              />
+              <span className="text-sm text-black dark:text-metal-silver flex items-center gap-2">
+                <Hand className="h-4 w-4" /> Finger Positions
+              </span>
+            </label>
+
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"

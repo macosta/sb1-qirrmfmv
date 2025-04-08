@@ -36,6 +36,7 @@ const useGuitarStore = create<GuitarState>()(
       showChords: false,
       showAllNotes: true,
       showRoot: true,
+      showFingers: true,
       selectedNote: '',
       selectedScale: '',
       selectedChord: '',
@@ -101,6 +102,7 @@ const useGuitarStore = create<GuitarState>()(
       toggleShowTriads: () => set((state) => ({ showTriads: !state.showTriads })),
       toggleShowAllNotes: () => set((state) => ({ showAllNotes: !state.showAllNotes })),
       toggleShowRoot: () => set((state) => ({ showRoot: !state.showRoot })),
+      toggleShowFingers: () => set((state) => ({ showFingers: !state.showFingers })),
       setHasActiveSelection: (hasActiveSelection) => set({ hasActiveSelection }),
       setFretboardOrientation: (orientation) => set({ fretboardOrientation: orientation }),
       toggleFretboardOrientation: () => set((state) => ({
@@ -121,6 +123,7 @@ const useGuitarStore = create<GuitarState>()(
         noteColorMode: state.noteColorMode,
         noteColor: state.noteColor,
         showNotesBar: state.showNotesBar,
+        showFingers: state.showFingers
       }),
       onRehydrateStorage: () => (state) => {
         // Apply theme on page load

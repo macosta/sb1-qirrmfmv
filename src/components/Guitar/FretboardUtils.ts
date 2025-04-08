@@ -1,4 +1,4 @@
-import { NOTES, getNoteAtFret, CHORDS } from '../../lib/utils';
+import { NOTES, getNoteAtFret, CHORDS, FINGER_COLORS, getChordPositionsWithFingerings } from '../../lib/utils';
 
 // Type for note marker styling
 export interface NoteMarkerStyle {
@@ -21,13 +21,14 @@ export function shouldShowNote(
     selectedScale: string | null;
     selectedChord: string | null;
     chordNotes: string[];
-    chordPositions: { string: number; fret: number; note?: string; role?: string }[];
+    chordPositions: { string: number; fret: number; note?: string; role?: string, finger?: number }[];
     showChords: boolean;
     showTriads: boolean;
     hasActiveSelection: boolean;
     showAllNotes: boolean;
     showRoot: boolean;
     tuning: string[];
+    showFingers?: boolean;
   }
 ): boolean {
   const { 
@@ -41,7 +42,8 @@ export function shouldShowNote(
     hasActiveSelection, 
     showAllNotes, 
     showRoot, 
-    tuning 
+    tuning,
+    showFingers 
   } = options;
 
   const isInChord = chordNotes.includes(note);
@@ -273,4 +275,68 @@ export function getTuningNoteColor(
   }
 
   return 'rgb(100, 100, 100)'; // Default color for other notes
+}
+
+/**
+ * Returns the finger number for a position on the fretboard
+ */
+export function getFingerForPosition(
+  stringIndex: number, 
+  fretIndex: number, 
+  options: {
+    selectedChord: string | null;
+    showFingers: boolean;
+    chordPositions: { string: number; fret: number; note?: string; role?: string; finger?: number }[];
+  }
+): number | null {
+  const { selectedChord, showFingers, chordPositions } = options;
+  
+  if (!showFingers || !selectedChord) return null;
+  
+  // Find the chord position for this string and fret
+  const position = chordPositions.find(pos => 
+    pos.string === stringIndex && pos.fret === fretIndex
+  );
+  
+  return position?.finger || null;
+}
+
+/**
+ * Determines if a barre should be drawn at a particular position
+ */
+export function shouldDrawBarre(
+  stringIndex: number,
+  fretIndex: number,
+  options: {
+    selectedChord: string | null;
+    showFingers: boolean;
+  }
+): boolean {
+  const { selectedChord, showFingers } = options;
+  
+  if (!showFingers || !selectedChord) return false;
+  
+  // Get chord positions with fingerings
+  const positions = getChordPositionsWithFingerings(selectedChord);
+  
+  // Check if any position has a barre that includes this string/fret
+  return positions.some(position => {
+    return position.barres.some(barre => {
+      // Convert display string indices (0=high E, 5=low E) to actual string indices
+      const startActual = 5 - barre.startString; 
+      const endActual = 5 - barre.endString;
+      
+      return barre.fret === fretIndex && 
+             stringIndex >= Math.min(startActual, endActual) && 
+             stringIndex <= Math.max(startActual, endActual);
+    });
+  });
+}
+
+/**
+ * Get the color for a finger marker
+ */
+export function getFingerColor(finger: number | null): string {
+  if (finger === null) return 'transparent';
+  return FINGER_COLORS[finger as keyof typeof FINGER_COLORS] || 'gray';
 }

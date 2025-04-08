@@ -63,7 +63,7 @@ export function getIntervalName(note: string, rootNote: string): string {
   return result;
 }
 
-// Updated chord definitions with accurate notes
+// Updated chord definitions with accurate notes and finger positions
 export const CHORDS = {
   'C Major': ['C', 'E', 'G'],
   'C Major sixth': ['C', 'E', 'G', 'A'],
@@ -219,6 +219,241 @@ export const CHORDS = {
   'B Minor ninth': ['B', 'D', 'F#', 'A', 'C#'],
   'B Minor eleventh': ['B', 'D', 'F#', 'A', 'C#', 'E'],
   'B Minor 13th': ['B', 'D', 'F#', 'A', 'C#', 'E', 'G#']
+};
+
+// Chord positions with fingerings - mapping chord names to specific fretboard positions
+export const CHORD_POSITIONS = {
+  'C Major': [
+    {
+      // x32010 - Open C shape
+      fretStart: 0,
+      fingerings: [null, 3, 2, 0, 1, 0], // null = muted, 0 = open, 1-4 = fingers
+      notes: ['×', 'C', 'E', 'G', 'C', 'E'],
+      barres: []
+    },
+    {
+      // 8 10 10 9 8 8 - C shape barre
+      fretStart: 7,
+      fingerings: [1, 3, 4, 2, 1, 1], 
+      notes: ['C', 'E', 'G', 'C', 'E', 'G'],
+      barres: [{fret: 8, startString: 0, endString: 5}]
+    },
+    {
+      // x 3 5 5 5 3 - C shape barre at 3rd fret
+      fretStart: 2,
+      fingerings: [null, 1, 3, 4, 2, 1],
+      notes: ['×', 'C', 'G', 'C', 'E', 'G'],
+      barres: [{fret: 3, startString: 1, endString: 5}]
+    }
+  ],
+  'G Major': [
+    {
+      // 320003 - Open G shape
+      fretStart: 0,
+      fingerings: [3, 2, 0, 0, 0, 3],
+      notes: ['G', 'B', 'D', 'G', 'B', 'G'],
+      barres: []
+    },
+    {
+      // 3 5 5 4 3 3 - G shape barre
+      fretStart: 2,
+      fingerings: [1, 3, 4, 2, 1, 1],
+      notes: ['G', 'B', 'D', 'G', 'B', 'D'],
+      barres: [{fret: 3, startString: 0, endString: 5}]
+    }
+  ],
+  'D Major': [
+    {
+      // xx0232 - Open D shape
+      fretStart: 0,
+      fingerings: [null, null, 0, 2, 3, 2],
+      notes: ['×', '×', 'D', 'A', 'D', 'F#'],
+      barres: []
+    },
+    {
+      // x 5 7 7 7 5 - D shape barre
+      fretStart: 4,
+      fingerings: [null, 1, 3, 4, 2, 1],
+      notes: ['×', 'D', 'A', 'D', 'F#', 'A'],
+      barres: [{fret: 5, startString: 1, endString: 5}]
+    }
+  ],
+  'A Major': [
+    {
+      // x02220 - Open A shape
+      fretStart: 0,
+      fingerings: [null, 0, 2, 2, 2, 0],
+      notes: ['×', 'A', 'E', 'A', 'C#', 'E'],
+      barres: []
+    },
+    {
+      // 5 7 7 6 5 5 - A shape barre
+      fretStart: 4,
+      fingerings: [1, 3, 4, 2, 1, 1],
+      notes: ['A', 'E', 'A', 'C#', 'E', 'A'],
+      barres: [{fret: 5, startString: 0, endString: 5}]
+    }
+  ],
+  'E Major': [
+    {
+      // 022100 - Open E shape
+      fretStart: 0,
+      fingerings: [0, 2, 2, 1, 0, 0],
+      notes: ['E', 'B', 'E', 'G#', 'B', 'E'],
+      barres: []
+    },
+    {
+      // 0 2 2 1 0 0 - E shape
+      fretStart: 0,
+      fingerings: [0, 2, 2, 1, 0, 0],
+      notes: ['E', 'B', 'E', 'G#', 'B', 'E'],
+      barres: []
+    }
+  ],
+  'A Minor': [
+    {
+      // x02210 - Open Am shape
+      fretStart: 0,
+      fingerings: [null, 0, 2, 2, 1, 0],
+      notes: ['×', 'A', 'E', 'A', 'C', 'E'],
+      barres: []
+    },
+    {
+      // 5 7 7 5 5 5 - Am shape barre
+      fretStart: 4,
+      fingerings: [1, 3, 4, 1, 1, 1],
+      notes: ['A', 'E', 'A', 'C', 'E', 'A'],
+      barres: [{fret: 5, startString: 0, endString: 5}]
+    }
+  ],
+  'E Minor': [
+    {
+      // 022000 - Open Em shape
+      fretStart: 0,
+      fingerings: [0, 2, 2, 0, 0, 0],
+      notes: ['E', 'B', 'E', 'G', 'B', 'E'],
+      barres: []
+    },
+    {
+      // 0 2 2 0 0 0 - Em shape
+      fretStart: 0,
+      fingerings: [0, 2, 2, 0, 0, 0],
+      notes: ['E', 'B', 'E', 'G', 'B', 'E'],
+      barres: []
+    }
+  ],
+  'D Minor': [
+    {
+      // xx0231 - Open Dm shape
+      fretStart: 0,
+      fingerings: [null, null, 0, 2, 3, 1],
+      notes: ['×', '×', 'D', 'A', 'D', 'F'],
+      barres: []
+    },
+    {
+      // x 5 7 7 6 5 - Dm shape barre
+      fretStart: 4,
+      fingerings: [null, 1, 3, 4, 2, 1],
+      notes: ['×', 'D', 'A', 'D', 'F', 'A'],
+      barres: [{fret: 5, startString: 1, endString: 5}]
+    }
+  ],
+  'G Minor': [
+    {
+      // 3x0333 - Open Gm shape (not standard)
+      fretStart: 2,
+      fingerings: [1, null, 0, 2, 3, 4],
+      notes: ['G', '×', 'D', 'G', 'Bb', 'D'],
+      barres: []
+    },
+    {
+      // 3 5 5 3 3 3 - Gm shape barre
+      fretStart: 2,
+      fingerings: [1, 3, 4, 1, 1, 1],
+      notes: ['G', 'D', 'G', 'Bb', 'D', 'G'],
+      barres: [{fret: 3, startString: 0, endString: 5}]
+    }
+  ],
+  'C Minor': [
+    {
+      // x35543 - Cm shape (movable)
+      fretStart: 2,
+      fingerings: [null, 1, 3, 4, 2, 1],
+      notes: ['×', 'C', 'G', 'C', 'Eb', 'G'],
+      barres: [{fret: 3, startString: 1, endString: 5}]
+    },
+    {
+      // 8 10 10 8 8 8 - Cm shape barre
+      fretStart: 7,
+      fingerings: [1, 3, 4, 1, 1, 1],
+      notes: ['C', 'G', 'C', 'Eb', 'G', 'C'],
+      barres: [{fret: 8, startString: 0, endString: 5}]
+    }
+  ],
+  'B Minor': [
+    {
+      // x24432 - Bm shape (movable)
+      fretStart: 1,
+      fingerings: [null, 1, 3, 4, 2, 1],
+      notes: ['×', 'B', 'F#', 'B', 'D', 'F#'],
+      barres: [{fret: 2, startString: 1, endString: 5}]
+    },
+    {
+      // 7 9 9 7 7 7 - Bm shape barre
+      fretStart: 6,
+      fingerings: [1, 3, 4, 1, 1, 1],
+      notes: ['B', 'F#', 'B', 'D', 'F#', 'B'],
+      barres: [{fret: 7, startString: 0, endString: 5}]
+    }
+  ],
+  'F Major': [
+    {
+      // 133211 - F barre chord
+      fretStart: 0,
+      fingerings: [1, 3, 3, 2, 1, 1],
+      notes: ['F', 'C', 'F', 'A', 'C', 'F'],
+      barres: [{fret: 1, startString: 0, endString: 5}]
+    },
+    {
+      // xx3211 - F shape (partial)
+      fretStart: 0,
+      fingerings: [null, null, 3, 2, 1, 1],
+      notes: ['×', '×', 'F', 'A', 'C', 'F'],
+      barres: [{fret: 1, startString: 4, endString: 5}]
+    }
+  ],
+  'F Minor': [
+    {
+      // 133111 - Fm barre chord
+      fretStart: 0,
+      fingerings: [1, 3, 3, 1, 1, 1],
+      notes: ['F', 'C', 'F', 'Ab', 'C', 'F'],
+      barres: [{fret: 1, startString: 0, endString: 5}]
+    }
+  ]
+};
+
+// Map chord types to their base chords for finger positions
+export const CHORD_TYPE_MAPPING = {
+  'Major': 'Major',
+  'Minor': 'Minor',
+  'Major sixth': 'Major',
+  'Major seventh': 'Major',
+  'Minor Seventh': 'Minor',
+  'Major dominant seventh': 'Major',
+  'Suspended second': 'Major',
+  'Suspended Fourth': 'Major',
+  'Power chord': 'Power'
+};
+
+// Finger color mapping
+export const FINGER_COLORS = {
+  1: '#4CAF50', // Green for index finger
+  2: '#2196F3', // Blue for middle finger
+  3: '#FF9800', // Orange for ring finger
+  4: '#9C27B0', // Purple for pinky
+  0: 'transparent', // Open string
+  null: 'transparent' // Muted string
 };
 
 // Cache for scales - we'll initialize this later
@@ -468,8 +703,38 @@ export function getChordFrets(chordName: string, tuning = STANDARD_TUNING): (num
   }).reverse();
 }
 
+/**
+ * Get chord positions including fingering information
+ * @param chordName The name of the chord (e.g., 'C Major', 'Em')
+ * @param tuning The tuning array (default: STANDARD_TUNING)
+ * @returns An array of chord positions with fingering information
+ */
+export function getChordPositionsWithFingerings(chordName: string | null): any[] {
+  // If no chord name is provided, return empty array
+  if (!chordName) return [];
+  
+  // Parse the chord name to get root and type
+  const [rootNote, ...typeWords] = chordName.split(' ');
+  const chordType = typeWords.join(' ');
+  
+  // Look for exact match first
+  if (CHORD_POSITIONS[chordName as keyof typeof CHORD_POSITIONS]) {
+    return CHORD_POSITIONS[chordName as keyof typeof CHORD_POSITIONS];
+  }
+  
+  // Look for a match based on the root note and type
+  const rootChord = `${rootNote} ${CHORD_TYPE_MAPPING[chordType as keyof typeof CHORD_TYPE_MAPPING] || 'Major'}`;
+  
+  if (CHORD_POSITIONS[rootChord as keyof typeof CHORD_POSITIONS]) {
+    return CHORD_POSITIONS[rootChord as keyof typeof CHORD_POSITIONS];
+  }
+  
+  // If no matching chord is found, return an empty array
+  return [];
+}
+
 // Get all occurrences of chord notes across the fretboard
-export function getAllChordPositions(chordName: string | null, tuning = STANDARD_TUNING, frets = 24): { string: number, fret: number, note: string, role: string }[] {
+export function getAllChordPositions(chordName: string | null, tuning = STANDARD_TUNING, frets = 24): { string: number, fret: number, note: string, role: string, finger?: number }[] {
   // Cache key for memoization
   const cacheKey = `chordPositions:${chordName}:${tuning.join(',')}:${frets}`;
   if (memoizationCache[cacheKey]) {
@@ -486,6 +751,97 @@ export function getAllChordPositions(chordName: string | null, tuning = STANDARD
   const [rootNote, ...typeWords] = chordName.split(' ');
   const chordType = typeWords.join(' ');
   
+  // Get fingering information for this chord
+  const chordPositions = getChordPositionsWithFingerings(chordName);
+  
+  // If we have specific fingerings available, use them
+  if (chordPositions.length > 0) {
+    // Use the first chord position (most common)
+    const chordPosition = chordPositions[0];
+    
+    // Map the fingerings to positions on the fretboard
+    const positions: { string: number, fret: number, note: string, role: string, finger?: number }[] = [];
+    
+    chordPosition.fingerings.forEach((finger: number | null, stringIdx: number) => {
+      // Skip muted strings
+      if (finger === null) return;
+      
+      // For open strings (finger = 0), fret is 0
+      const fret = finger === 0 ? 0 : chordPosition.fretStart + finger;
+      
+      // Get actual string index (reversed from the fingering display)
+      const actualStringIndex = 5 - stringIdx;
+      
+      // Get the note at this position
+      const openNote = tuning[actualStringIndex];
+      const noteAtFret = getNoteAtFret(openNote, fret);
+      
+      // Determine the role of this note in the chord
+      let role = 'chord';
+      if (noteAtFret === rootNote) {
+        role = 'root';
+      } else if (noteAtFret === chordNotes[1]) {
+        role = 'third';
+      } else if (noteAtFret === chordNotes[2]) {
+        role = 'fifth';
+      } else if (chordNotes[3] && noteAtFret === chordNotes[3]) {
+        role = 'seventh';
+      }
+      
+      // Only add finger information if not an open string
+      positions.push({
+        string: actualStringIndex,
+        fret: fret,
+        note: noteAtFret,
+        role: role,
+        ...(finger !== 0 && { finger: finger })
+      });
+    });
+    
+    // Add barre information if needed
+    chordPosition.barres.forEach((barre: { fret: number, startString: number, endString: number }) => {
+      for (let i = barre.startString; i <= barre.endString; i++) {
+        // Check if this position is already in the positions array
+        const existingPos = positions.find(pos => 
+          pos.string === 5-i && pos.fret === barre.fret
+        );
+        
+        // If not already in positions, add it
+        if (!existingPos) {
+          const actualStringIndex = 5-i;
+          const openNote = tuning[actualStringIndex];
+          const noteAtFret = getNoteAtFret(openNote, barre.fret);
+          
+          // Determine the role of this note in the chord
+          let role = 'chord';
+          if (noteAtFret === rootNote) {
+            role = 'root';
+          } else if (noteAtFret === chordNotes[1]) {
+            role = 'third';
+          } else if (noteAtFret === chordNotes[2]) {
+            role = 'fifth';
+          } else if (chordNotes[3] && noteAtFret === chordNotes[3]) {
+            role = 'seventh';
+          }
+          
+          positions.push({
+            string: actualStringIndex,
+            fret: barre.fret,
+            note: noteAtFret,
+            role: role,
+            finger: 1 // Barre is always with index finger
+          });
+        }
+      }
+    });
+    
+    // Cache the results
+    memoizationCache[cacheKey] = positions;
+    
+    return positions;
+  }
+  
+  // Fallback: Find all occurrences of chord notes across the fretboard
   const positions: { string: number, fret: number, note: string, role: string }[] = [];
   
   tuning.forEach((stringNote, stringIndex) => {

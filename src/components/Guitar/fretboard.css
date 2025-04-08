@@ -236,6 +236,87 @@
   height: 100%;
 }
 
+/* Finger position styling - NEW */
+.slim-fretboard .finger-marker {
+  position: absolute;
+  z-index: 15; /* Above note markers */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.slim-fretboard .finger-1 {
+  background-color: #4CAF50; /* Green for index */
+}
+
+.slim-fretboard .finger-2 {
+  background-color: #2196F3; /* Blue for middle */
+}
+
+.slim-fretboard .finger-3 {
+  background-color: #FF9800; /* Orange for ring */
+}
+
+.slim-fretboard .finger-4 {
+  background-color: #9C27B0; /* Purple for pinky */
+}
+
+.slim-fretboard .finger-0 {
+  /* Open string indicator */
+  background-color: transparent;
+  border: 2px solid #ccc;
+  color: #ccc;
+  font-size: 12px;
+  width: 20px;
+  height: 20px;
+}
+
+.slim-fretboard .finger-x {
+  /* Muted string indicator */
+  background-color: transparent;
+  color: #f44336;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Barre chord indicator */
+.slim-fretboard .barre-indicator {
+  position: absolute;
+  height: 12px;
+  background-color: rgba(76, 175, 80, 0.6); /* Semi-transparent green */
+  border-radius: 6px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Show fingers toggle switch */
+.fingers-toggle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.fingers-toggle label {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.fingers-toggle input {
+  width: 36px;
+  height: 20px;
+}
+
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
   .slim-fretboard {
@@ -259,6 +340,18 @@
   
   .slim-fretboard .note-marker .alt-note {
     font-size: 7px;
+  }
+
+  /* Mobile finger position styling */
+  .slim-fretboard .finger-marker {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+  }
+  
+  .slim-fretboard .barre-indicator {
+    height: 10px;
+    border-radius: 5px;
   }
   
   /* Mobile-specific styles for the fretboard component */
@@ -325,6 +418,11 @@
     transform: translate(-50%, -50%) rotate(90deg);
   }
 
+  /* Counter-rotate finger markers to keep them readable */
+  .vertical-fretboard .slim-fretboard .finger-marker {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
   /* Fix position of fret wires in vertical orientation */
   .vertical-fretboard .slim-fretboard .fret-wire {
     height: 100%;
@@ -334,6 +432,11 @@
   /* Adjust string line for vertical orientation */
   .vertical-fretboard .slim-fretboard .string-line {
     width: 100%;
+  }
+
+  /* Adjust barre indicator for vertical orientation */
+  .vertical-fretboard .slim-fretboard .barre-indicator {
+    transform: rotate(90deg);
   }
 
   /* Force horizontal scrolling to be disabled */
@@ -376,6 +479,11 @@
   .slim-fretboard .note-marker {
     width: 28px; /* Bigger note markers for touch */
     height: 28px;
+  }
+
+  .slim-fretboard .finger-marker {
+    width: 24px; /* Bigger finger markers for touch */
+    height: 24px;
   }
 }
 

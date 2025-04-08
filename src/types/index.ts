@@ -99,6 +99,7 @@ export interface GuitarState {
   showChords: boolean;
   showAllNotes: boolean;
   showRoot: boolean;
+  showFingers: boolean;
   
   // Note visualization options
   noteColorMode: NoteColorMode;
@@ -131,6 +132,7 @@ export interface GuitarState {
   toggleShowTriads: () => void;
   toggleShowAllNotes: () => void;
   toggleShowRoot: () => void;
+  toggleShowFingers: () => void;
   setHasActiveSelection: (active: boolean) => void;
   setFretboardOrientation: (orientation: FretboardOrientation) => void;
   toggleFretboardOrientation: () => void;
