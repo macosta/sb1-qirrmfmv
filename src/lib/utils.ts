@@ -229,37 +229,42 @@ export const CHORD_POSITIONS = {
       fretStart: 0,
       fingerings: [null, 3, 2, 0, 1, 0], // null = muted, 0 = open, 1-4 = fingers
       notes: ['×', 'C', 'E', 'G', 'C', 'E'],
-      barres: []
+      barres: [],
+      position: "Open Position"
     },
     {
       // 8 10 10 9 8 8 - C shape barre
       fretStart: 7,
       fingerings: [1, 3, 4, 2, 1, 1], 
       notes: ['C', 'E', 'G', 'C', 'E', 'G'],
-      barres: [{fret: 8, startString: 0, endString: 5}]
+      barres: [{fret: 8, startString: 0, endString: 5}],
+      position: "8th Position"
     },
     {
       // x 3 5 5 5 3 - C shape barre at 3rd fret
       fretStart: 2,
       fingerings: [null, 1, 3, 4, 2, 1],
       notes: ['×', 'C', 'G', 'C', 'E', 'G'],
-      barres: [{fret: 3, startString: 1, endString: 5}]
+      barres: [{fret: 3, startString: 1, endString: 5}],
+      position: "3rd Position"
     }
   ],
   'G Major': [
     {
       // 320003 - Open G shape
       fretStart: 0,
-      fingerings: [3, 2, 0, 0, 0, 3],
+      fingerings: [3, 2, 0, 0, 0, 3], // Fingerings in [Low E, A, D, G, B, High E] order
       notes: ['G', 'B', 'D', 'G', 'B', 'G'],
-      barres: []
+      barres: [],
+      position: "Open Position"
     },
     {
       // 3 5 5 4 3 3 - G shape barre
       fretStart: 2,
       fingerings: [1, 3, 4, 2, 1, 1],
       notes: ['G', 'B', 'D', 'G', 'B', 'D'],
-      barres: [{fret: 3, startString: 0, endString: 5}]
+      barres: [{fret: 3, startString: 0, endString: 5}],
+      position: "3rd Position"
     }
   ],
   'D Major': [
@@ -268,14 +273,16 @@ export const CHORD_POSITIONS = {
       fretStart: 0,
       fingerings: [null, null, 0, 2, 3, 2],
       notes: ['×', '×', 'D', 'A', 'D', 'F#'],
-      barres: []
+      barres: [],
+      position: "Open Position"
     },
     {
       // x 5 7 7 7 5 - D shape barre
       fretStart: 4,
       fingerings: [null, 1, 3, 4, 2, 1],
       notes: ['×', 'D', 'A', 'D', 'F#', 'A'],
-      barres: [{fret: 5, startString: 1, endString: 5}]
+      barres: [{fret: 5, startString: 1, endString: 5}],
+      position: "5th Position"
     }
   ],
   'A Major': [
@@ -284,14 +291,16 @@ export const CHORD_POSITIONS = {
       fretStart: 0,
       fingerings: [null, 0, 2, 2, 2, 0],
       notes: ['×', 'A', 'E', 'A', 'C#', 'E'],
-      barres: []
+      barres: [],
+      position: "Open Position"
     },
     {
       // 5 7 7 6 5 5 - A shape barre
       fretStart: 4,
       fingerings: [1, 3, 4, 2, 1, 1],
       notes: ['A', 'E', 'A', 'C#', 'E', 'A'],
-      barres: [{fret: 5, startString: 0, endString: 5}]
+      barres: [{fret: 5, startString: 0, endString: 5}],
+      position: "5th Position"
     }
   ],
   'E Major': [
@@ -300,14 +309,16 @@ export const CHORD_POSITIONS = {
       fretStart: 0,
       fingerings: [0, 2, 2, 1, 0, 0],
       notes: ['E', 'B', 'E', 'G#', 'B', 'E'],
-      barres: []
+      barres: [],
+      position: "Open Position"
     },
     {
       // 0 2 2 1 0 0 - E shape
       fretStart: 0,
       fingerings: [0, 2, 2, 1, 0, 0],
       notes: ['E', 'B', 'E', 'G#', 'B', 'E'],
-      barres: []
+      barres: [],
+      position: "Open Position"
     }
   ],
   'A Minor': [
@@ -316,14 +327,16 @@ export const CHORD_POSITIONS = {
       fretStart: 0,
       fingerings: [null, 0, 2, 2, 1, 0],
       notes: ['×', 'A', 'E', 'A', 'C', 'E'],
-      barres: []
+      barres: [],
+      position: "Open Position"
     },
     {
       // 5 7 7 5 5 5 - Am shape barre
       fretStart: 4,
       fingerings: [1, 3, 4, 1, 1, 1],
       notes: ['A', 'E', 'A', 'C', 'E', 'A'],
-      barres: [{fret: 5, startString: 0, endString: 5}]
+      barres: [{fret: 5, startString: 0, endString: 5}],
+      position: "5th Position"
     }
   ],
   'E Minor': [
@@ -332,14 +345,16 @@ export const CHORD_POSITIONS = {
       fretStart: 0,
       fingerings: [0, 2, 2, 0, 0, 0],
       notes: ['E', 'B', 'E', 'G', 'B', 'E'],
-      barres: []
+      barres: [],
+      position: "Open Position"
     },
     {
       // 0 2 2 0 0 0 - Em shape
       fretStart: 0,
       fingerings: [0, 2, 2, 0, 0, 0],
       notes: ['E', 'B', 'E', 'G', 'B', 'E'],
-      barres: []
+      barres: [],
+      position: "Open Position"
     }
   ],
   'D Minor': [
@@ -348,14 +363,16 @@ export const CHORD_POSITIONS = {
       fretStart: 0,
       fingerings: [null, null, 0, 2, 3, 1],
       notes: ['×', '×', 'D', 'A', 'D', 'F'],
-      barres: []
+      barres: [],
+      position: "Open Position"
     },
     {
       // x 5 7 7 6 5 - Dm shape barre
       fretStart: 4,
       fingerings: [null, 1, 3, 4, 2, 1],
       notes: ['×', 'D', 'A', 'D', 'F', 'A'],
-      barres: [{fret: 5, startString: 1, endString: 5}]
+      barres: [{fret: 5, startString: 1, endString: 5}],
+      position: "5th Position"
     }
   ],
   'G Minor': [
@@ -364,14 +381,16 @@ export const CHORD_POSITIONS = {
       fretStart: 2,
       fingerings: [1, null, 0, 2, 3, 4],
       notes: ['G', '×', 'D', 'G', 'Bb', 'D'],
-      barres: []
+      barres: [],
+      position: "3rd Position"
     },
     {
       // 3 5 5 3 3 3 - Gm shape barre
       fretStart: 2,
       fingerings: [1, 3, 4, 1, 1, 1],
       notes: ['G', 'D', 'G', 'Bb', 'D', 'G'],
-      barres: [{fret: 3, startString: 0, endString: 5}]
+      barres: [{fret: 3, startString: 0, endString: 5}],
+      position: "3rd Position Barre"
     }
   ],
   'C Minor': [
@@ -380,14 +399,16 @@ export const CHORD_POSITIONS = {
       fretStart: 2,
       fingerings: [null, 1, 3, 4, 2, 1],
       notes: ['×', 'C', 'G', 'C', 'Eb', 'G'],
-      barres: [{fret: 3, startString: 1, endString: 5}]
+      barres: [{fret: 3, startString: 1, endString: 5}],
+      position: "3rd Position"
     },
     {
       // 8 10 10 8 8 8 - Cm shape barre
       fretStart: 7,
       fingerings: [1, 3, 4, 1, 1, 1],
       notes: ['C', 'G', 'C', 'Eb', 'G', 'C'],
-      barres: [{fret: 8, startString: 0, endString: 5}]
+      barres: [{fret: 8, startString: 0, endString: 5}],
+      position: "8th Position"
     }
   ],
   'B Minor': [
@@ -396,14 +417,16 @@ export const CHORD_POSITIONS = {
       fretStart: 1,
       fingerings: [null, 1, 3, 4, 2, 1],
       notes: ['×', 'B', 'F#', 'B', 'D', 'F#'],
-      barres: [{fret: 2, startString: 1, endString: 5}]
+      barres: [{fret: 2, startString: 1, endString: 5}],
+      position: "2nd Position"
     },
     {
       // 7 9 9 7 7 7 - Bm shape barre
       fretStart: 6,
       fingerings: [1, 3, 4, 1, 1, 1],
       notes: ['B', 'F#', 'B', 'D', 'F#', 'B'],
-      barres: [{fret: 7, startString: 0, endString: 5}]
+      barres: [{fret: 7, startString: 0, endString: 5}],
+      position: "7th Position"
     }
   ],
   'F Major': [
@@ -412,14 +435,16 @@ export const CHORD_POSITIONS = {
       fretStart: 0,
       fingerings: [1, 3, 3, 2, 1, 1],
       notes: ['F', 'C', 'F', 'A', 'C', 'F'],
-      barres: [{fret: 1, startString: 0, endString: 5}]
+      barres: [{fret: 1, startString: 0, endString: 5}],
+      position: "1st Position"
     },
     {
       // xx3211 - F shape (partial)
       fretStart: 0,
       fingerings: [null, null, 3, 2, 1, 1],
       notes: ['×', '×', 'F', 'A', 'C', 'F'],
-      barres: [{fret: 1, startString: 4, endString: 5}]
+      barres: [{fret: 1, startString: 4, endString: 5}],
+      position: "1st Position (Partial)"
     }
   ],
   'F Minor': [
@@ -428,7 +453,8 @@ export const CHORD_POSITIONS = {
       fretStart: 0,
       fingerings: [1, 3, 3, 1, 1, 1],
       notes: ['F', 'C', 'F', 'Ab', 'C', 'F'],
-      barres: [{fret: 1, startString: 0, endString: 5}]
+      barres: [{fret: 1, startString: 0, endString: 5}],
+      position: "1st Position"
     }
   ]
 };
@@ -706,7 +732,6 @@ export function getChordFrets(chordName: string, tuning = STANDARD_TUNING): (num
 /**
  * Get chord positions including fingering information
  * @param chordName The name of the chord (e.g., 'C Major', 'Em')
- * @param tuning The tuning array (default: STANDARD_TUNING)
  * @returns An array of chord positions with fingering information
  */
 export function getChordPositionsWithFingerings(chordName: string | null): any[] {
@@ -734,7 +759,7 @@ export function getChordPositionsWithFingerings(chordName: string | null): any[]
 }
 
 // Get all occurrences of chord notes across the fretboard
-export function getAllChordPositions(chordName: string | null, tuning = STANDARD_TUNING, frets = 24): { string: number, fret: number, note: string, role: string, finger?: number }[] {
+export function getAllChordPositions(chordName: string | null, tuning = STANDARD_TUNING, frets = 24): { string: number; fret: number; note: string; role: string; finger?: number; }[] {
   // Cache key for memoization
   const cacheKey = `chordPositions:${chordName}:${tuning.join(',')}:${frets}`;
   if (memoizationCache[cacheKey]) {
@@ -762,6 +787,8 @@ export function getAllChordPositions(chordName: string | null, tuning = STANDARD
     // Map the fingerings to positions on the fretboard
     const positions: { string: number, fret: number, note: string, role: string, finger?: number }[] = [];
     
+    // IMPORTANT: fingerings are defined in Low E to high E order (index 0 = low E, index 5 = high E)
+    // But our tuning array and fretboard display is in the opposite order
     chordPosition.fingerings.forEach((finger: number | null, stringIdx: number) => {
       // Skip muted strings
       if (finger === null) return;
@@ -769,7 +796,9 @@ export function getAllChordPositions(chordName: string | null, tuning = STANDARD
       // For open strings (finger = 0), fret is 0
       const fret = finger === 0 ? 0 : chordPosition.fretStart + finger;
       
-      // Get actual string index (reversed from the fingering display)
+      // Map the string index correctly from the CHORD_POSITIONS definition to the actual string
+      // In CHORD_POSITIONS, 0 = low E (6th string) and 5 = high E (1st string)
+      // But in our tuning array and display, we use the opposite: 0 = E (1st string) and 5 = E (6th string)
       const actualStringIndex = 5 - stringIdx;
       
       // Get the note at this position
@@ -778,17 +807,32 @@ export function getAllChordPositions(chordName: string | null, tuning = STANDARD
       
       // Determine the role of this note in the chord
       let role = 'chord';
+      
       if (noteAtFret === rootNote) {
         role = 'root';
       } else if (noteAtFret === chordNotes[1]) {
         role = 'third';
       } else if (noteAtFret === chordNotes[2]) {
         role = 'fifth';
-      } else if (chordNotes[3] && noteAtFret === chordNotes[3]) {
-        role = 'seventh';
+      } else {
+        // Handle extended chord tones
+        const noteIndex = chordNotes.indexOf(noteAtFret);
+        if (noteIndex >= 3) {
+          if (chordType.includes('seventh') || chordType.includes('7')) {
+            role = 'seventh';
+          } else if (chordType.includes('ninth') || chordType.includes('9')) {
+            role = 'ninth';
+          } else if (chordType.includes('eleventh') || chordType.includes('11')) {
+            role = 'eleventh';
+          } else if (chordType.includes('thirteenth') || chordType.includes('13')) {
+            role = 'thirteenth';
+          } else if (chordType.includes('sixth') || chordType.includes('6')) {
+            role = 'sixth';
+          }
+        }
       }
       
-      // Only add finger information if not an open string
+      // Add to positions array
       positions.push({
         string: actualStringIndex,
         fret: fret,
@@ -800,15 +844,18 @@ export function getAllChordPositions(chordName: string | null, tuning = STANDARD
     
     // Add barre information if needed
     chordPosition.barres.forEach((barre: { fret: number, startString: number, endString: number }) => {
+      // Barre strings are also defined in Low E (0) to High E (5) order, so we need to map them
       for (let i = barre.startString; i <= barre.endString; i++) {
+        // Map the string index from chord position notation to our tuning array indexing
+        const actualStringIndex = 5-i;
+        
         // Check if this position is already in the positions array
         const existingPos = positions.find(pos => 
-          pos.string === 5-i && pos.fret === barre.fret
+          pos.string === actualStringIndex && pos.fret === barre.fret
         );
         
         // If not already in positions, add it
         if (!existingPos) {
-          const actualStringIndex = 5-i;
           const openNote = tuning[actualStringIndex];
           const noteAtFret = getNoteAtFret(openNote, barre.fret);
           

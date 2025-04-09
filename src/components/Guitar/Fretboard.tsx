@@ -8,7 +8,7 @@ import { InteractiveHoverButton } from '../UI/InteractiveHoverButton';
 import { InteractiveScalesButton } from '../UI/InteractiveScalesButton';
 import { ToggleGroup, ToggleGroupItem } from '../UI/ToggleGroup';
 import FretboardNoteDisplay from '../UI/FretboardNoteDisplay';
-import { shouldShowNote, getNoteMarkerStyle, getTuningNoteColor, getFingerForPosition, getFingerColor } from './FretboardUtils';
+import { shouldShowNote, getNoteMarkerStyle, getTuningNoteColor, getFingerForPosition, getFingerColor, getFingerFromFingerings } from './FretboardUtils';
 import { useMobileDetection } from '../../hooks/useMediaQuery';
 import { useDebounce } from '../../hooks/useDebounce';
 import './fretboard.css';
@@ -84,7 +84,7 @@ const Fretboard: React.FC<FretboardProps> = memo(({
   
   // Debug when props or state changes
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log("[Fretboard] State/props update:", { 
         showChords, 
         externalShowChords, 
@@ -345,7 +345,11 @@ const Fretboard: React.FC<FretboardProps> = memo(({
             selectedChord,
             showFingers,
             chordPositions
-          })
+          }),
+          directFinger: fingerPositions.length > 0 ? getFingerFromFingerings(5 - stringIndex, fretIndex, {
+            selectedChord,
+            fingerPositions
+          }) : null
         },
         displayLogic: {
           shouldShow: shouldShowNote(noteAtFret, isInScale, stringIndex, fretIndex, {
@@ -371,7 +375,7 @@ const Fretboard: React.FC<FretboardProps> = memo(({
     chordNotes, chordPositions, showChords, showTriads, 
     fretboardOrientation, selectedNote, selectedChord, 
     showDebugOverlay, hasActiveSelection, showAllNotes, showRoot,
-    showFingers
+    showFingers, fingerPositions
   ]);
 
   // Handler for interval/degree/note display
@@ -488,8 +492,31 @@ const Fretboard: React.FC<FretboardProps> = memo(({
     );
   }, [showFingers, handleToggleFingers, showChords]);
 
+  // Toggle debug overlay
+  const toggleDebugOverlay = useCallback(() => {
+    setShowDebugOverlay(prev => !prev);
+    if (!showDebugOverlay) {
+      updateGlobalDebugInfo();
+    }
+  }, [showDebugOverlay, updateGlobalDebugInfo]);
+
   return (
     <div className={cn("relative w-full", className)}>
+      {/* Debug Toggle Button */}
+      <div className="absolute top-0 right-0 z-50">
+        <button
+          onClick={toggleDebugOverlay}
+          className={cn(
+            "p-1 rounded text-xs",
+            showDebugOverlay 
+              ? "bg-red-500 text-white" 
+              : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+          )}
+        >
+          {showDebugOverlay ? "Hide Debug" : "Debug"}
+        </button>
+      </div>
+      
       {/* Debug Overlay */}
       {showDebugOverlay && debugInfo && (
         <div className="fixed top-4 right-4 bg-black/90 text-white p-4 rounded-lg shadow-lg z-50 max-w-md overflow-auto max-h-[80vh]">
@@ -661,6 +688,13 @@ const Fretboard: React.FC<FretboardProps> = memo(({
                                     }}
                                   />
                                   
+                                  {/* Debug marker - Display string and fret info on hover when debug mode is on */}
+                                  {showDebugOverlay && (
+                                    <div className="absolute inset-0 flex items-center justify-center text-[8px] text-white opacity-30 pointer-events-none">
+                                      S:{actualStringIndex} F:{fretNumber}
+                                    </div>
+                                  )}
+                                  
                                   {/* Note visualization */}
                                   {(() => {
                                     // Get the correct open note for this string
@@ -698,13 +732,23 @@ const Fretboard: React.FC<FretboardProps> = memo(({
                                       noteColor,
                                       noteColorMap
                                     });
-                                    
-                                    // Get finger number for this position if showing fingers
-                                    const fingerNumber = getFingerForPosition(actualStringIndex, fretNumber, {
-                                      selectedChord,
-                                      showFingers,
-                                      chordPositions
-                                    });
+
+                                    // FIXED: Get finger directly from the fingerings array for correct mapping
+                                    let fingerNumber = null;
+                                    if (showChords && showFingers && fingerPositions.length > 0) {
+                                      // Use the new function for direct access to fingerings array
+                                      fingerNumber = getFingerFromFingerings(stringIndex, fretNumber, {
+                                        selectedChord,
+                                        fingerPositions
+                                      });
+                                    } else {
+                                      // Fall back to the original function for other cases
+                                      fingerNumber = getFingerForPosition(actualStringIndex, fretNumber, {
+                                        selectedChord,
+                                        showFingers,
+                                        chordPositions
+                                      });
+                                    }
 
                                     // Get finger color based on finger number
                                     const fingerColor = getFingerColor(fingerNumber);
@@ -746,6 +790,16 @@ const Fretboard: React.FC<FretboardProps> = memo(({
                                             aria-label="Muted string"
                                           >
                                             ×
+                                          </div>
+                                        )}
+
+                                        {/* Debug info for current position */}
+                                        {showDebugOverlay && (fingerNumber !== null || shouldShow) && (
+                                          <div 
+                                            className="absolute top-0 right-0 bg-black/70 text-[6px] text-white p-0.5 rounded pointer-events-none"
+                                          >
+                                            {fingerNumber !== null && `F:${fingerNumber}`}
+                                            {shouldShow && ` ${note}`}
                                           </div>
                                         )}
                                       </>
@@ -801,11 +855,125 @@ const Fretboard: React.FC<FretboardProps> = memo(({
           </div>
         )}
       </div>
+
+      {/* Debug Chord Position Info */}
+      {showDebugOverlay && selectedChord && (
+        <div className="mt-4 p-4 bg-black/80 text-white rounded-lg">
+          <h4 className="text-lg font-bold mb-2">Chord Position Debug</h4>
+          <div className="text-sm space-y-2">
+            <div>
+              <strong>Selected Chord:</strong> {selectedChord}
+            </div>
+            <div>
+              <strong>Chord Notes:</strong> {chordNotes.join(', ')}
+            </div>
+            <div>
+              <strong>Finger Positions:</strong>
+            </div>
+            <div className="max-h-[200px] overflow-y-auto">
+              {fingerPositions.length > 0 ? (
+                <div>
+                  <div className="font-bold">Position: {fingerPositions[0].position}</div>
+                  <div className="flex space-x-2 mb-2">
+                    <div><strong>Fret Start:</strong> {fingerPositions[0].fretStart}</div>
+                    <div><strong>Barres:</strong> {fingerPositions[0].barres.length}</div>
+                  </div>
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr>
+                        <th className="text-left">String</th>
+                        <th className="text-left">Finger</th>
+                        <th className="text-left">Note</th>
+                        <th className="text-left">Fret</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* String display is high E to low E (0-5) */}
+                      {fingerPositions[0].fingerings.slice().reverse().map((finger, idx) => {
+                        // Map displayed string index (0-5) to actual string index in reversed tuning
+                        const visualStringIdx = idx; // This is high E (0) to low E (5)
+                        const actualStringIdx = 5 - idx; // This maps to the tuning array correct index
+                        const stringOpenNote = tuning[actualStringIdx];
+                        
+                        // If finger is null, the string is muted
+                        if (finger === null) {
+                          return (
+                            <tr key={idx} className="border-t border-gray-700">
+                              <td>{visualStringIdx} ({stringOpenNote})</td>
+                              <td>X</td>
+                              <td>Muted</td>
+                              <td>-</td>
+                            </tr>
+                          );
+                        }
+                        
+                        // For open strings
+                        if (finger === 0) {
+                          return (
+                            <tr key={idx} className="border-t border-gray-700">
+                              <td>{visualStringIdx} ({stringOpenNote})</td>
+                              <td>Open</td>
+                              <td>{stringOpenNote}</td>
+                              <td>0</td>
+                            </tr>
+                          );
+                        }
+                        
+                        // For fretted notes
+                        const fret = fingerPositions[0].fretStart + finger;
+                        const noteAtFret = getNoteAtFret(stringOpenNote, fret);
+                        
+                        return (
+                          <tr key={idx} className="border-t border-gray-700">
+                            <td>{visualStringIdx} ({stringOpenNote})</td>
+                            <td>{finger}</td>
+                            <td>{noteAtFret}</td>
+                            <td>{fret}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+
+                  {/* Barre information */}
+                  {fingerPositions[0].barres.length > 0 && (
+                    <div className="mt-4">
+                      <div className="font-bold">Barres:</div>
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr>
+                            <th className="text-left">Fret</th>
+                            <th className="text-left">Start String</th>
+                            <th className="text-left">End String</th>
+                            <th className="text-left">Finger</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {fingerPositions[0].barres.map((barre, idx) => (
+                            <tr key={idx} className="border-t border-gray-700">
+                              <td>{barre.fret}</td>
+                              <td>{barre.startString}</td>
+                              <td>{barre.endString}</td>
+                              <td>1 (Index)</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-red-400">No finger positions available for this chord</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Fretboard Display Modal */}
       <FretboardDisplayModal 
         open={fretModalOpen} 
-        onOpenChange={(open) => setFretModalOpen(open)}
+        onOpenChange={setFretModalOpen}
       />
     </div>
   );

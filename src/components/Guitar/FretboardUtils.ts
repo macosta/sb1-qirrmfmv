@@ -279,6 +279,7 @@ export function getTuningNoteColor(
 
 /**
  * Returns the finger number for a position on the fretboard
+ * Fixed to correctly map between display string index and chord fingering data
  */
 export function getFingerForPosition(
   stringIndex: number, 
@@ -299,6 +300,51 @@ export function getFingerForPosition(
   );
   
   return position?.finger || null;
+}
+
+/**
+ * Get finger position directly from fingerings array in the chord position
+ * This helps debug the string index mapping issue
+ */
+export function getFingerFromFingerings(
+  displayStringIndex: number,  // Visual string index (0=high E, 5=low E)
+  fretIndex: number,
+  options: {
+    selectedChord: string | null;
+    fingerPositions: any[];
+  }
+): number | null {
+  const { selectedChord, fingerPositions } = options;
+  
+  if (!selectedChord || !fingerPositions || fingerPositions.length === 0) {
+    return null;
+  }
+  
+  // Get the first fingering position (most common)
+  const position = fingerPositions[0];
+  
+  // Convert display string index (0=high E, 5=low E) to chord data index (0=low E, 5=high E)
+  // Using a direct 5-index conversion to match the data structure
+  const dataStringIndex = 5 - displayStringIndex;
+  
+  // Get the finger at this position from the fingerings array
+  const finger = position.fingerings[dataStringIndex];
+  
+  // If it's a fretted position, make sure the fret matches
+  if (finger !== null && finger > 0) {
+    const fret = position.fretStart + finger;
+    if (fret === fretIndex) {
+      return finger;
+    }
+    return null;
+  }
+  
+  // For open strings (finger=0)
+  if (finger === 0 && fretIndex === 0) {
+    return 0;
+  }
+  
+  return null;
 }
 
 /**
